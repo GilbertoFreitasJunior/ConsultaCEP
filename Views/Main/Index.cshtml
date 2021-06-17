@@ -1,10 +1,72 @@
 ﻿@{ ViewData["Title"] = "Consulta CEP"; }
 
-<h1 class="text-center text-success">Consulte seu CEP:</h1>
+<h1 class="text-center text-dar my-4">Consulte seu CEP:</h1>
 
-<form asp-action="ConsultaCEP" method="post">
-    <label for="CEP">CEP:</label>
-    <input type="text" name="CEP"/>
-</form>
+<div>
+    <div class="row mb-3">
+        <label class="col-2 text-center pt-1" for="State">Cep:</label>
+        <input type="text" class="col-7" placeholder="17400114" id="CEP">
+        <button class="btn btn-primary col-2 ml-2" id="GetCEP">Buscar CEP</button>
+        <div class="col-1"></div>
+    </div>
+    <div class="row mb-3">
+        <label class="col-2 text-center pt-1" for="Estado">Estado:</label>
+        <input type="text" class="col-9" name="Estado" id="Estado" />
+        <div class="col"></div>
+    </div>
 
-<p>@ViewData["Dado1"];</p>
+    <div class="row mb-3">
+        <label class="col-2 text-center pt-1" for="Cidade">Cidade:</label>
+        <input type="text" class="col-9" name="Cidade" id="Cidade" />
+        <div class="col"></div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-2 text-center pt-1" for="Bairro">Bairro:</label>
+        <input type="text" class="col-9" name="Bairro" id="Bairro" />
+        <div class="col"></div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-2 text-center pt-1" for="Rua">Rua:</label>
+        <input type="text" class="col-9" name="Rua" id="Rua" />
+        <div class="col"></div>
+    </div>
+</div>
+
+<p class="text-danger text-center" id="TextError"></p>
+
+<script>
+    document.getElementById("GetCEP").addEventListener("click", function () {
+    var cep = document.getElementById("CEP");
+    var endereco;
+
+    $.ajax({
+        type: "POST",
+        url: "@Url.Action("ConsultaCEP")",
+        data: { CEP: cep.value },
+        dataType: "json",
+        success: function (txt) {
+            console.log(typeof txt);
+            console.log(txt);
+            if (ChecaNulo(txt)) {
+                document.getElementById("TextError").textContent = "ERRO: CEP INVÁLIDO!";
+            }
+            else {
+                document.getElementById("Estado").value = txt.State;
+                document.getElementById("Cidade").value = txt.City;
+                document.getElementById("Bairro").value = txt.District;
+                document.getElementById("Rua").value = txt.Street;
+            }
+        }
+    });
+    });
+
+    function ChecaNulo(obj) {
+        for (var key in obj) {
+            if (obj[key] !== null)
+                return false;
+        }
+        return true;
+    }
+</script>

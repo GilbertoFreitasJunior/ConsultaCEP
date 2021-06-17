@@ -1,8 +1,10 @@
 ﻿using ConsultaCEP.Models;
+using Correios.NET;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
-using Correios.NET;
+using System.Text.Json;
 
 namespace ConsultaCEP.Controllers
 {
@@ -21,22 +23,28 @@ namespace ConsultaCEP.Controllers
             return View();
         }
 
-        public IActionResult ConsultaCEP(string CEP)
+        public string ConsultaCEP(string CEP)
         {
-            var enderecos = new Services().GetAddresses(CEP);
-            var endereco = new CEP();
-
-            foreach (var item in enderecos)
+            try
             {
-                endereco.ZipCode = item.ZipCode;
-                endereco.District = item.District;
-                endereco.State = item.State;
-                endereco.City = item.City;
-                endereco.Street = item.Street;
-            }
+                var enderecos = new Services().GetAddresses(CEP);
+                var endereco = new CEP();
 
-            ViewData["Endereco"] = endereco;
-            return View("Index");
+                foreach (var item in enderecos)
+                {
+                    endereco.ZipCode = item.ZipCode;
+                    endereco.State = item.State;
+                    endereco.City = item.City;
+                    endereco.District = item.District;
+                    endereco.Street = item.Street;
+                }
+
+                return JsonSerializer.Serialize(endereco);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Erro ao Consultar o CEP!");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
