@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using Correios.NET;
 
 namespace ConsultaCEP.Controllers
 {
@@ -18,6 +19,24 @@ namespace ConsultaCEP.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult ConsultaCEP(string CEP)
+        {
+            var enderecos = new Services().GetAddresses(CEP);
+            var endereco = new CEP();
+
+            foreach (var item in enderecos)
+            {
+                endereco.ZipCode = item.ZipCode;
+                endereco.District = item.District;
+                endereco.State = item.State;
+                endereco.City = item.City;
+                endereco.Street = item.Street;
+            }
+
+            ViewData["Endereco"] = endereco;
+            return View("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

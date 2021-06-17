@@ -1,1 +1,10 @@
-﻿
+﻿@{ ViewData["Title"] = "Consulta CEP"; }
+
+<h1 class="text-center text-success">Consulte seu CEP:</h1>
+
+<form asp-action="ConsultaCEP" method="post">
+    <label for="CEP">CEP:</label>
+    <input type="text" name="CEP"/>
+</form>
+
+<p>@ViewData["Dado1"];</p>
